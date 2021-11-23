@@ -27,7 +27,7 @@
       <div class="col-md-1"></div>
     </div>
   </div>
-  <div class="row">
+  <div class="row m-0">
     <div class="col-12">
       <div class="text-center">
         <h3>Your Events</h3>
@@ -40,7 +40,7 @@
     </div>
   </div>
 
-  <div class="row">
+  <div class="row m-0">
     <div class="col-12">
       <div class="text-center p-3">
         <h3>The Events you are Attending</h3>
@@ -50,6 +50,9 @@
   <div class="row m-0">
     <div class="col-12" v-for="e in myAttendees" :key="e.id">
       <EventCards :event="e.event" />
+      <button @click="removeAttendance(e.id)" class="btn btn-outline-danger">
+        Delete Attendance
+      </button>
     </div>
   </div>
 </template>
@@ -75,6 +78,9 @@ export default {
       await eventService.getAllEvents()
     })
     return {
+      async removeAttendance(eventId) {
+        await eventService.deleteAttendence(eventId, AppState.account.id)
+      },
       account: computed(() => AppState.account),
       myEvents: computed(() => AppState.events.filter(e => e.creatorId == AppState.account.id)),
       myAttendees: computed(() => AppState.myAttendingEvents)

@@ -22,6 +22,7 @@ class EventService {
   async createEvent(body) {
     const res = await api.post('api/events', body)
     AppState.events.unshift(res.data)
+    await this.setActiveEvent(res.data.id)
     return res.data
   }
   async editEvent(body, event) {
@@ -71,6 +72,10 @@ class EventService {
       EventTing.capacity--
       AppState.activeEvent = EventTing
     } return
+  }
+  async deleteAttendence(eventId, account) {
+    await api.delete(`api/attendees/${eventId}`)
+    AppState.myAttendingEvents = AppState.myAttendingEvents.filter(m => m.id !== eventId)
   }
 }
 
