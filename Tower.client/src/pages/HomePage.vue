@@ -25,6 +25,13 @@
               <button
                 class="btn btn-outline-primary px-3"
                 title="filter by Concert"
+                @click="filterEvents('')"
+              >
+                All
+              </button>
+              <button
+                class="btn btn-outline-primary px-3"
+                title="filter by Concert"
                 @click="filterEvents('concert')"
               >
                 Concert
@@ -64,26 +71,35 @@
 </template>
 
 <script>
-import { computed } from "@vue/reactivity"
+import { computed, ref } from "@vue/reactivity"
 import { AppState } from "../AppState"
-import { onMounted } from "@vue/runtime-core"
+import { onMounted, watchEffect } from "@vue/runtime-core"
 import { eventService } from "../services/EventService"
 import Pop from "../utils/Pop"
 import { logger } from "../utils/Logger"
 export default {
   setup() {
+    const Events = ref([])
+    const filter = ref('')
     onMounted(async () => {
       await eventService.getAllEvents()
     })
+    watchEffect(() => {
+      let e = AppState.events
+      if (filter.value != '') {
+        e = AppState.events.filter(e => e.type == filter.value)
+      }
+      Events.value = e
+    })
     return {
+      Events,
       async filterEvents(type) {
         try {
-          await eventService.getEventsByType(type)
+          filter.value = type
         } catch (error) {
           logger.log(error, 'error')
         }
-      },
-      Events: computed(() => AppState.events)
+      }
     }
   },
 }
