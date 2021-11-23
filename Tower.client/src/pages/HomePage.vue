@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       <div class="col-12">
-        <div class="card p-2 m-2">
+        <div class="card p-2 m-2 text-dark">
           <div class="card-title">
             <h2><b>Tower (Powered by Meta)</b></h2>
           </div>
@@ -17,8 +17,46 @@
         </div>
       </div>
     </div>
+    <div class="row m-0">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <button
+                class="btn btn-outline-primary px-3"
+                title="filter by Concert"
+                @click="filterEvents('concert')"
+              >
+                Concert
+              </button>
+              <button
+                class="btn btn-outline-primary px-3"
+                title="filter by Convention"
+                @click="filterEvents('convention')"
+              >
+                Convention
+              </button>
+              <button
+                class="btn btn-outline-primary px-3"
+                title="filter by Digital"
+                @click="filterEvents('digital')"
+              >
+                Digital
+              </button>
+              <button
+                class="btn btn-outline-primary px-3"
+                title="filter by Sports"
+                @click="filterEvents('sport')"
+              >
+                Sport
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="row">
-      <div class="col-3" v-for="e in Events" :key="e.id">
+      <div class="col-md-3" v-for="e in Events" :key="e.id">
         <EventCards :event="e" />
       </div>
     </div>
@@ -30,12 +68,21 @@ import { computed } from "@vue/reactivity"
 import { AppState } from "../AppState"
 import { onMounted } from "@vue/runtime-core"
 import { eventService } from "../services/EventService"
+import Pop from "../utils/Pop"
+import { logger } from "../utils/Logger"
 export default {
   setup() {
     onMounted(async () => {
       await eventService.getAllEvents()
     })
     return {
+      async filterEvents(type) {
+        try {
+          await eventService.getEventsByType(type)
+        } catch (error) {
+          logger.log(error, 'error')
+        }
+      },
       Events: computed(() => AppState.events)
     }
   },

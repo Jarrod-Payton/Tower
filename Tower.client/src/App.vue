@@ -2,11 +2,11 @@
   <header>
     <Navbar />
   </header>
-  <main>
+  <main class="bg-dark">
     <router-view />
   </main>
   <footer>
-    <div class="bg-dark text-light text-center p-4">Made By Jarrod</div>
+    <MakeEventModal />
   </footer>
 </template>
 
@@ -24,4 +24,7 @@ export default {
 </script>
 <style lang="scss">
 @import "./assets/scss/main.scss";
+.Striked {
+  text-decoration: line-through;
+}
 </style>

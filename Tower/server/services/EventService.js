@@ -31,7 +31,8 @@ class EventService {
     if (body.startDate < Date.now) {
       throw new Forbidden('This concert already happened')
     }
-    const updated = await dbContext.TowerEvents.findByIdAndUpdate(body.id, body)
+    await dbContext.TowerEvents.findByIdAndUpdate(body.id, body)
+    const updated = dbContext.TowerEvents.findById(body.id)
     return updated
   }
 

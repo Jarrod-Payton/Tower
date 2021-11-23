@@ -1,5 +1,5 @@
 import { dbContext } from '../db/DbContext'
-import { BadRequest } from '../utils/Errors'
+import { BadRequest, Forbidden } from '../utils/Errors'
 
 class AttendeesService {
   async getAttendeesByEvent(body) {
@@ -13,14 +13,29 @@ class AttendeesService {
   }
 
   async createAttendee(body) {
-    const eventBeingPlanned = await dbContext.TowerEvents.findById(body.eventId)
-    if (eventBeingPlanned.capacity >= 1) {
-      const newAttendee = await dbContext.Attendees.create(body)
-      eventBeingPlanned.capacity--
-      await dbContext.TowerEvents.findByIdAndUpdate(eventBeingPlanned.id, eventBeingPlanned)
-      return newAttendee
+    // const eventBeingPlanned = await dbContext.TowerEvents.findById(body.eventId)
+    // if (eventBeingPlanned.capacity >= 1) {
+    //   const newAttendee = await dbContext.Attendees.create(body)
+    //   eventBeingPlanned.capacity--
+    //   await dbContext.TowerEvents.findByIdAndUpdate(eventBeingPlanned.id, eventBeingPlanned)
+    //   return newAttendee
+    // } else {
+    //   throw new BadRequest('capacity is already full')
+    // }
+
+    const found = await dbContext.Attendees.findOne(body)
+    if (!found) {
+      const eventBeingPlanned = await dbContext.TowerEvents.findById(body.eventId)
+      if (eventBeingPlanned.capacity >= 1) {
+        const newAttendee = await dbContext.Attendees.create(body)
+        eventBeingPlanned.capacity--
+        await dbContext.TowerEvents.findByIdAndUpdate(eventBeingPlanned.id, eventBeingPlanned)
+        return newAttendee
+      } else {
+        throw new BadRequest('capacity is already full')
+      }
     } else {
-      throw new BadRequest('capacity is already full')
+      return new Forbidden('You already are attending')
     }
   }
 
