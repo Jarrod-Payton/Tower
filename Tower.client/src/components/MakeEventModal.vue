@@ -66,7 +66,6 @@
               <option value="sport">Sport</option>
               <option value="digital">Digital</option>
             </select>
-
             <!-- <b-form-select
               v-model="state.editable.type"
               :options="options"
